@@ -18,18 +18,17 @@ class Effects(var effects: List<Effect<*, *>>) {
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     suspend fun <E : Any, O> perform(action: E): O = suspendCoroutine { cont ->
-        for (anEffect in effects) {
-            if (anEffect.klass.isInstance(action)) {
-                @Suppress("UNCHECKED_CAST")
-                val effect = anEffect as? Effect<E, O>
-                if (effect != null) {
-                    return@suspendCoroutine effect.apply(action, cont)
-                }
-            }
-        }
+        val result =
+            effects.filter { it.klass.isInstance(action) }
+                .map { it as Effect<E, O> }
+                .map { it.apply(action, cont) }
+                .firstOrNull()
 
-        // Do nothing !
+        if (result == null) {
+            // TODO
+        }
     }
 
     infix fun handle(block: suspend Effects.() -> Any): Job =
