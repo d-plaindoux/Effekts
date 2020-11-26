@@ -34,7 +34,7 @@ class Effects(var effects: List<Effect<*, *>>) {
     private fun handleWithEffects(block: suspend Effects.() -> Any): Job =
         GlobalScope.launch { this@Effects.block() }
 
-    class EffectsHandler(val code: suspend Effects.() -> Any) {
+    class EffectsHandler(private val code: suspend Effects.() -> Any) {
         infix fun with(effects: Effects.() -> Effects): Job =
             Effects(listOf()).effects().handleWithEffects(code)
     }
