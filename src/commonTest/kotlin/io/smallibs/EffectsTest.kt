@@ -1,6 +1,6 @@
 package io.smallibs
 
-import io.smallibs.Effects.Companion.withEffects
+import io.smallibs.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -16,7 +16,10 @@ class EffectsTest {
     fun shouldPerformEffect() {
         val actions = mutableListOf<String>()
 
-        withEffects {
+        handle {
+            val name: String = perform(readString)
+            perform(printString("Hello $name"))
+        } with {
             effect { p: printString ->
                 { k: Continuation<Unit> ->
                     actions += "printString(" + p.text + ")"
@@ -29,9 +32,6 @@ class EffectsTest {
                     k.resume("World")
                 }
             }
-        } handle {
-            val name: String = perform(readString)
-            perform(printString("Hello $name"))
         }
 
         Await() atMost 5000 until { actions.size == 2 }
