@@ -1,3 +1,3 @@
 # Effekts
 
-Algebraic effects for Kotlin multiplatform
+User defined effects for Kotlin multiplatform
