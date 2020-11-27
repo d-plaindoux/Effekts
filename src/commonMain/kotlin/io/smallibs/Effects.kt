@@ -5,13 +5,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
-import kotlin.reflect.KClass
 
 class Effects(var effects: List<Effect<*, *>>) {
-    data class Effect<E : Any, O>(val klass: KClass<E>, val code: (E) -> (Continuation<O>) -> Unit) {
-        fun apply(a: E, cont: Continuation<O>): Unit =
-            code(a)(cont)
-    }
 
     inline infix fun <reified E : Any, O> effect(noinline code: (E) -> (Continuation<O>) -> Unit): Effects {
         effects += Effect(E::class, code)
