@@ -9,14 +9,15 @@ import kotlin.test.assertEquals
 
 class EffectsTest {
 
-    data class printString(val text: String)
-    object readString
+    interface IOConsole
+    data class printString(val text: String) : IOConsole
+    object readString : IOConsole
 
     @Test
     fun shouldPerformEffect() {
         val actions = mutableListOf<String>()
 
-        handle {
+        handle<IOConsole, Unit> {
             val name: String = perform(readString)
             perform(printString("Hello $name"))
         } with {
