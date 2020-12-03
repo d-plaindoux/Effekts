@@ -1,8 +1,8 @@
 package io.smallibs
 
-import io.smallibs.Effects.Companion.handle
 import io.smallibs.EffectsTest.IOConsole.printString
 import io.smallibs.EffectsTest.IOConsole.readString
+import io.smallibs.Handler.Companion.handle
 import io.smallibs.utils.Await
 import kotlin.test.Test
 import kotlin.test.assertEquals
