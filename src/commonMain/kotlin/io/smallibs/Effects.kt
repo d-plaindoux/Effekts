@@ -8,9 +8,9 @@ class Effects<O, E>(var effect: suspend (E) -> Any) {                       // O
 
     suspend fun <A> perform(action: E): A = this.effect(action) as A        // Ugly cast remaining here
 
-    class Handler<O, E>(private val code: suspend Effects<O, E>.() -> O) {  // Execution should be reviewed
+    class Handler<O, E>(private val code: suspend Effects<O, E>.() -> O) {  
         infix fun with(effects: suspend (E) -> Any): Deferred<O> =
-            GlobalScope.async { Effects<O, E>(effects).run { code() } }
+            GlobalScope.async { Effects<O, E>(effects).run { code() } }     // Execution should be reviewed
     }
 
     companion object {
