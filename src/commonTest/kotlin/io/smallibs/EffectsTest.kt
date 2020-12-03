@@ -26,11 +26,11 @@ class EffectsTest {
             when (it) {
                 is printString -> {
                     actions += "printString(" + it.text + ")"
-                    it.id(Unit)
+                    it.resume(Unit)
                 }
                 is readString -> {
                     actions += "readStream(World)"
-                    it.id("World")
+                    it.resume("World")
                 }
             }
         }
