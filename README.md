@@ -4,7 +4,7 @@ User defined effects for Kotlin multiplatform
 
 # Example
 
-## User define effects
+## User defined effects
 
 ```kotlin
 sealed class IOConsole<T> : Effect<T>() {
