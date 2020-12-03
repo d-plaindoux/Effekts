@@ -12,28 +12,16 @@ import kotlin.test.assertEquals
 class EffectsTest {
 
     // May be this can be automatically generated ?
-
-    sealed class IOConsole {
-        data class printString(val text: String, val id: suspend (Unit) -> Unit) : IOConsole() {
-            companion object {
-                suspend operator fun invoke(text: String): IOConsole =
-                    printString(text) { v -> suspendCoroutine { cont -> cont.resume(v) } }
-            }
-        }
-
-        data class readString(val id: suspend (String) -> String) : IOConsole() {
-            companion object {
-                suspend operator fun invoke(): IOConsole =
-                    readString { v -> suspendCoroutine { cont -> cont.resume(v) } }
-            }
-        }
+    sealed class IOConsole<T>(val id: suspend (T) -> T) {
+        data class printString(val text: String) : IOConsole<Unit>({ v -> suspendCoroutine { cont -> cont.resume(v) } })
+        class readString() : IOConsole<String>({ v -> suspendCoroutine { cont -> cont.resume(v) } })
     }
 
     @Test
     fun shouldPerformEffect() {
         val actions = mutableListOf<String>()
 
-        handle<Unit, IOConsole> {
+        handle<Unit, IOConsole<*>> {
             val name: String = perform(readString())
             perform(printString("Hello $name"))
         } with {
