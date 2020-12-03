@@ -4,17 +4,15 @@ import io.smallibs.Effects.Companion.handle
 import io.smallibs.EffectsTest.IOConsole.printString
 import io.smallibs.EffectsTest.IOConsole.readString
 import io.smallibs.utils.Await
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class EffectsTest {
 
-    // May be this can be automatically generated ?
-    sealed class IOConsole<T>(val id: suspend (T) -> T) {
-        data class printString(val text: String) : IOConsole<Unit>({ v -> suspendCoroutine { cont -> cont.resume(v) } })
-        class readString() : IOConsole<String>({ v -> suspendCoroutine { cont -> cont.resume(v) } })
+    // Effect definition
+    sealed class IOConsole<T> : Effect<T>() {
+        data class printString(val text: String) : IOConsole<Unit>()
+        class readString : IOConsole<String>()
     }
 
     @Test
