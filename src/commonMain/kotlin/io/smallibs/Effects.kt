@@ -4,17 +4,17 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
-class Effects<E, O>(var effect: suspend (E) -> Any) {
+class Effects<O, E>(var effect: suspend (E) -> Any) {
 
     suspend fun <A> perform(action: E): A = this.effect(action) as A // ???
 
-    class Handler<E, O>(private val code: suspend Effects<E, O>.() -> O) {
+    class Handler<O, E>(private val code: suspend Effects<O, E>.() -> O) {
         infix fun with(effects: suspend (E) -> Any): Deferred<O> =
-            GlobalScope.async { Effects<E, O>(effects).run { code() } }
+            GlobalScope.async { Effects<O, E>(effects).run { code() } }
     }
 
     companion object {
-        fun <E, O> handle(block: suspend Effects<E, O>.() -> O): Handler<E, O> =
+        fun <O, E> handle(block: suspend Effects<O, E>.() -> O): Handler<O, E> =
             Handler(block)
     }
 }

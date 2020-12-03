@@ -29,23 +29,22 @@ class EffectsTest {
         }
     }
 
-
     @Test
     fun shouldPerformEffect() {
         val actions = mutableListOf<String>()
 
-        handle<IOConsole, Unit> {
+        handle<Unit, IOConsole> {
             val name: String = perform(readString())
             perform(printString("Hello $name"))
-        } with { p: IOConsole ->
-            when (p) {
+        } with {
+            when (it) {
                 is printString -> {
-                    actions += "printString(" + p.text + ")"
-                    p.id(Unit)
+                    actions += "printString(" + it.text + ")"
+                    it.id(Unit)
                 }
                 is readString -> {
                     actions += "readStream(World)"
-                    p.id("World")
+                    it.id("World")
                 }
             }
         }
