@@ -1,36 +1,51 @@
 package io.smallibs
 
 import io.smallibs.Effects.Companion.handle
+import io.smallibs.EffectsTest.IOConsole.printString
+import io.smallibs.EffectsTest.IOConsole.readString
 import io.smallibs.utils.Await
-import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class EffectsTest {
 
-    interface IOConsole
-    data class printString(val text: String) : IOConsole
-    object readString : IOConsole
+    // May be this can be automatically generated ?
+
+    sealed class IOConsole {
+        data class printString(val text: String, val id: suspend (Unit) -> Unit) : IOConsole() {
+            companion object {
+                suspend operator fun invoke(text: String): IOConsole =
+                    printString(text) { v -> suspendCoroutine { cont -> cont.resume(v) } }
+            }
+        }
+
+        data class readString(val id: suspend (String) -> String) : IOConsole() {
+            companion object {
+                suspend operator fun invoke(): IOConsole =
+                    readString { v -> suspendCoroutine { cont -> cont.resume(v) } }
+            }
+        }
+    }
+
 
     @Test
     fun shouldPerformEffect() {
         val actions = mutableListOf<String>()
 
         handle<IOConsole, Unit> {
-            val name: String = perform(readString)
+            val name: String = perform(readString())
             perform(printString("Hello $name"))
-        } with {
-            effect { p: printString ->
-                { k: Continuation<Unit> ->
+        } with { p: IOConsole ->
+            when (p) {
+                is printString -> {
                     actions += "printString(" + p.text + ")"
-                    k.resume(Unit)
+                    p.id(Unit)
                 }
-            }
-            effect { _: readString ->
-                { k: Continuation<String> ->
+                is readString -> {
                     actions += "readStream(World)"
-                    k.resume("World")
+                    p.id("World")
                 }
             }
         }
