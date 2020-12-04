@@ -1,4 +1,4 @@
-package io.smallibs
+package io.smallibs.core
 
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -8,4 +8,3 @@ open class Effect<T>(
         suspendCoroutine { cont -> cont.resume(v) }
     }
 )
-
