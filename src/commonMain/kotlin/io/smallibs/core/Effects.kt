@@ -1,7 +1,15 @@
 package io.smallibs.core
 
-class Effects<O, E : Effect<*>>(var effect: suspend (E) -> Any?) { // O is not used (phantom type)
-    suspend fun <A> perform(action: E): A = this.effect(action) as A // Ugly cast remaining here
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-    suspend fun <A> E.bind(): A = this@Effects.perform(this)
+// O is not used (phantom type)
+private typealias EffectHandler<E, A> = suspend (E, suspend (A) -> A) -> A
+
+class Effects<O, E : Effect<*>>(var effect: EffectHandler<E, *>) {
+    private fun <T> continuation(): suspend (T) -> T = { v ->
+        suspendCoroutine { cont -> cont.resume(v) }
+    }
+
+    suspend fun <A> Effect<A>.bind(): A = this@Effects.effect(this as E, continuation<A>()) as A
 }

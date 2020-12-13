@@ -5,7 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
 class Handler<O, E : Effect<*>>(private val code: suspend Effects<O, E>.() -> O) {
-    infix fun with(effects: suspend (E) -> Any?): Deferred<O> =
+    infix fun with(effects: suspend (E, suspend (Any?) -> Any?) -> Any?): Deferred<O> =
         GlobalScope.async { Effects<O, E>(effects).run { code() } } // Execution should be reviewed
 
     companion object {

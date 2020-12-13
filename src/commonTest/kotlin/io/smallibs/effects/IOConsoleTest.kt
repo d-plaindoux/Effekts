@@ -14,17 +14,17 @@ class IOConsoleTest {
         val actions = mutableListOf<String>()
 
         handle<Unit, IOConsole<*>> {
-            val name: String = readString().bind()
+            val name = readString().bind()
             printString("Hello $name").bind()
-        } with {
-            when (it) {
+        } with { v, k ->
+            when (v) {
                 is printString -> {
-                    actions += "printString(" + it.text + ")"
-                    it.resume(Unit)
+                    actions += "printString(" + v.text + ")"
+                    k(Unit)
                 }
                 is readString -> {
                     actions += "readStream(World)"
-                    it.resume("World")
+                    k("World")
                 }
             }
         }

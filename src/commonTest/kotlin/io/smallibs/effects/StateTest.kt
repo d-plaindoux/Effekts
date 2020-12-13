@@ -15,21 +15,22 @@ class StateTest {
         val store: AtomicRef<String> = atomic("")
 
         handle<Unit, State<String, *>> {
-            val unit: Unit = set("World!").bind()
+            set("World!").bind()
             val name: String = get<String>().bind()
             set("Hello $name").bind()
-        } with {
-            when (it) {
-                is set<String> -> {
-                    store.getAndSet(it.value)
-                    it.resume(Unit)
+        } with { v, k ->
+            when (v) {
+                is set -> {
+                    store.getAndSet(v.value)
+                    k(Unit)
                 }
                 is get<*> -> {
-                    it as State<String, String> // WIP -> Should be reviewed
-                    it.resume(store.value)
+                    v as get<String> // WIP -> Should be reviewed
+                    k(store.value)
                 }
             }
         }
+
 
         Await() atMost 5000 until { store.value == "Hello World!" }
     }
