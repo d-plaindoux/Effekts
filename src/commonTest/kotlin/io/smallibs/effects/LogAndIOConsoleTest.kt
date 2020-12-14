@@ -14,33 +14,33 @@ class LogAndIOConsoleTest {
         val log: AtomicRef<String> = atomic("")
         val actions = mutableListOf<String>()
 
-handle<Unit, Log> { logger ->
-    handle<Unit, IOConsole> { console ->
-        val name = console.readString.bind()
-        console.printString("Hello $name").bind()
-        logger.log("Done").bind()
-    } with {
-        IOConsole(
-            { text ->
+        handle<Unit, Log> { logger ->
+            handle<Unit, IOConsole> { console ->
+                val name = console.readString.bind()
+                console.printString("Hello $name").bind()
+                logger.log("Done").bind()
+            } with {
+                IOConsole(
+                    { text ->
+                        { k ->
+                            actions += "printString($text)"
+                            k(Unit)
+                        }
+                    },
+                    { k ->
+                        actions += "readStream(World)"
+                        k("World!")
+                    }
+                )
+            }
+        } with {
+            Log { value ->
                 { k ->
-                    actions += "printString($text)"
+                    log.getAndSet(log.value + value)
                     k(Unit)
                 }
-            },
-            { k ->
-                actions += "readStream(World)"
-                k("World!")
             }
-        )
-    }
-} with {
-    Log { value ->
-        { k ->
-            log.getAndSet(log.value + value)
-            k(Unit)
         }
-    }
-}
 
         Await() atMost 5000 until { log.value == "Done" }
 
