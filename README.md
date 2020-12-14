@@ -47,6 +47,9 @@ class Log(val log: (String) -> Effect<Unit>) : Handler
 
 ### State
 
+The corresponding state is a naive specification. State monad should 
+be provided for this purpose.
+
 ```kotlin
 class State<V>(
     val set: (V) -> Effect<Unit>,
