@@ -10,7 +10,7 @@ User defined effects for Kotlin multiplatform
 class IOConsole(
     val printString: (String) -> Effect<Unit>,
     val readString: Effect<String>
-)
+): Handler
 ```
 
 ## DSL for effects handling
