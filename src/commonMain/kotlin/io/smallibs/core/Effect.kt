@@ -1,3 +1,3 @@
 package io.smallibs.core
 
-open class Effect<T>
+data class Effect<T>(val resume: suspend (suspend (T) -> T) -> T)

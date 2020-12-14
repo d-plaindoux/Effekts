@@ -1,7 +1,7 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Handler.Companion.handle
-import io.smallibs.effects.Log.log
+import io.smallibs.core.Effect
+import io.smallibs.core.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
@@ -13,18 +13,17 @@ class LogTest {
     fun shouldPerformEffect() {
         val log: AtomicRef<String> = atomic("")
 
-        handle<Unit, Log<*>> {
-            log("Hello ").bind()
-            log("World!").bind()
-        } with { v, k ->
-            when (v) {
-                is log -> {
-                    log.getAndSet(log.value + v.value)
+        handle<Unit, Log> { logger ->
+            logger.log("Hello ").bind()
+            logger.log("World!").bind()
+        } with {
+            object : Log {
+                override fun log(value: String) = Effect<Unit> { k ->
+                    log.getAndSet(log.value + value)
                     k(Unit)
                 }
             }
         }
-
 
         Await() atMost 5000 until { log.value == "Hello World!" }
     }

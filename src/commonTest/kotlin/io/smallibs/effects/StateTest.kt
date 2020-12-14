@@ -1,8 +1,7 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Handler.Companion.handle
-import io.smallibs.effects.State.get
-import io.smallibs.effects.State.set
+import io.smallibs.core.Effect
+import io.smallibs.core.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
@@ -14,23 +13,22 @@ class StateTest {
     fun shouldPerformEffect() {
         val store: AtomicRef<String> = atomic("")
 
-        handle<Unit, State<String, *>> {
-            set("World!").bind()
-            val name: String = get<String>().bind()
-            set("Hello $name").bind()
-        } with { v, k ->
-            when (v) {
-                is set -> {
-                    store.getAndSet(v.value)
+        handle<Unit, State<String>> { state ->
+            state.set("World!").bind()
+            val name: String = state.get().bind()
+            state.set("Hello $name").bind()
+        } with {
+            object : State<String> {
+                override fun set(value: String) = Effect<Unit> { k ->
+                    store.getAndSet(value)
                     k(Unit)
                 }
-                is get<*> -> {
-                    v as get<String> // WIP -> Should be reviewed
+
+                override fun get() = Effect<String> { k ->
                     k(store.value)
                 }
             }
         }
-
 
         Await() atMost 5000 until { store.value == "Hello World!" }
     }
