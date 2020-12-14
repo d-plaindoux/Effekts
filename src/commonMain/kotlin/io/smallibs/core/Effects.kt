@@ -8,6 +8,9 @@ import kotlin.coroutines.suspendCoroutine
 
 class Effects<O, E>(private val block: suspend Effects<O, E>.(E) -> O) {
 
+    infix fun with(effect: () -> E): Deferred<O> =
+        with(effect())
+
     infix fun with(effect: E): Deferred<O> =
         GlobalScope.async { run { block(effect) } } // Execution should be reviewed
 
