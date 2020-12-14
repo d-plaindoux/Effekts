@@ -7,27 +7,29 @@ User defined effects for Kotlin multiplatform
 ## User defined effects
 
 ```kotlin
-sealed class IOConsole<T> : Effect<T>() {
-    data class printString(val text: String) : IOConsole<Unit>()
-    class readString : IOConsole<String>()
+interface IOConsole {
+    fun printString(text: String) : Effect<Unit>
+    fun readString() : Effect<String>
 }
 ```
 
 ## DSL for effects handling
 
 ```kotlin
-handle<Unit, IOConsole<*>> {
-    val name: String = perform(readString())
-    perform(printString("Hello $name"))
-} with {
-    when (it) {
-        is printString -> {
-            println(it.text)
-            it.resume(Unit)
+handle<Unit, IOConsole> { console ->
+            val name = console.readString().bind()
+            console.printString("Hello $name").bind()
+        } with {
+            object : IOConsole {
+                override fun printString(text: String) = Effect<Unit> { k ->
+                    actions += "printString($text)"
+                    k(Unit)
+                }
+
+                override fun readString() = Effect<String> { k ->
+                    actions += "readStream(World)"
+                    k("World!")
+                }
+            }
         }
-        is readString -> {            
-            it.resume("World")
-        }
-    }
-}
 ```
