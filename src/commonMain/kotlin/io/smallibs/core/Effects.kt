@@ -6,7 +6,7 @@ import kotlinx.coroutines.async
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class Effects<O, H: Handler>(private val block: suspend Effects<O, H>.(H) -> O) {
+class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) -> O) {
 
     infix fun with(effect: () -> H): Deferred<O> =
         with(effect())
@@ -19,7 +19,7 @@ class Effects<O, H: Handler>(private val block: suspend Effects<O, H>.(H) -> O) 
     }
 
     companion object {
-        fun <O, H: Handler> handle(block: suspend Effects<O, H>.(H) -> O) =
+        fun <O, H : Handler> handle(block: suspend Effects<O, H>.(H) -> O) =
             Effects(block)
     }
 }

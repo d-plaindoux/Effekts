@@ -22,13 +22,13 @@ class LogAndIOConsoleTest {
             it.right.log("Done").bind()
         } with {
             IOConsole(
-                { text ->
+                printString = { text ->
                     { k ->
                         actions += "printString($text)"
                         k(Unit)
                     }
                 },
-                { k ->
+                readString = { k ->
                     actions += "readStream(World)"
                     k("World!")
                 }

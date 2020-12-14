@@ -17,14 +17,14 @@ class StateTest {
             val name: String = state.get.bind()
             state.set("Hello $name").bind()
         } with State(
-            { value ->
+            get = { k ->
+                k(store.value)
+            },
+            set = { value ->
                 { k ->
                     store.getAndSet(value)
                     k(Unit)
                 }
-            },
-            { k ->
-                k(store.value)
             }
         )
 
