@@ -16,7 +16,7 @@ class Effects<O, E>(private val block: suspend Effects<O, E>.(E) -> O) {
     }
 
     companion object {
-        fun <O, E> handle(block: suspend Effects<O, E>.(E) -> O): Effects<O, E> =
+        fun <O, E> handle(block: suspend Effects<O, E>.(E) -> O) =
             Effects(block)
     }
 }
