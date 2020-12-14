@@ -16,19 +16,19 @@ class LogAndIOConsoleTest {
         val log: AtomicRef<String> = atomic("")
         val actions = mutableListOf<String>()
 
-        handle<Unit, And<IOConsole, Log>> {
-            val name = it.left.readString.bind()
-            it.left.printString("Hello $name").bind()
+        handle<Unit, And<State<String>, Log>> {
+            val name = it.left.get.bind()
+            it.left.set("Hello $name").bind()
             it.right.log("Done").bind()
         } with {
-            IOConsole(
-                printString = { text ->
+            State<String>(
+                set = { text ->
                     { k ->
                         actions += "printString($text)"
                         k(Unit)
                     }
                 },
-                readString = { k ->
+                get = { k ->
                     actions += "readStream(World)"
                     k("World!")
                 }
