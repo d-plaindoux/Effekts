@@ -2,8 +2,8 @@ package io.smallibs.effects
 
 import io.smallibs.core.Effect
 
-interface IOConsole {
-    fun printString(text: String) : Effect<Unit>
-    fun readString() : Effect<String>
-}
+class IOConsole(
+    val printString: (String) -> Effect<Unit>,
+    val readString: Effect<String>
+)
 

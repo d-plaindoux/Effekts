@@ -1,6 +1,5 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Effect
 import io.smallibs.core.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
@@ -17,8 +16,8 @@ class LogTest {
             logger.log("Hello ").bind()
             logger.log("World!").bind()
         } with {
-            object : Log {
-                override fun log(value: String) = Effect<Unit> { k ->
+            Log { value ->
+                { k ->
                     log.getAndSet(log.value + value)
                     k(Unit)
                 }

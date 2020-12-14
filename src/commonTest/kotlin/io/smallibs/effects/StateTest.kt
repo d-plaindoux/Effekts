@@ -19,12 +19,12 @@ class StateTest {
             state.set("Hello $name").bind()
         } with {
             object : State<String> {
-                override fun set(value: String) = Effect<Unit> { k ->
+                override fun set(value: String): Effect<Unit> = { k ->
                     store.getAndSet(value)
                     k(Unit)
                 }
 
-                override fun get() = Effect<String> { k ->
+                override fun get(): Effect<String> = { k ->
                     k(store.value)
                 }
             }

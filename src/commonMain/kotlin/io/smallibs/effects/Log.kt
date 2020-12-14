@@ -2,7 +2,5 @@ package io.smallibs.effects
 
 import io.smallibs.core.Effect
 
-interface Log {
-    fun log(value: String): Effect<Unit>
-}
+class Log(val log: (String) -> Effect<Unit>)
 
