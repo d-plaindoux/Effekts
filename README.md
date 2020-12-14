@@ -7,10 +7,10 @@ User defined effects for Kotlin multiplatform
 ## User defined effects
 
 ```kotlin
-interface IOConsole {
-    fun printString(text: String) : Effect<Unit>
-    fun readString() : Effect<String>
-}
+class IOConsole(
+    val printString: (String) -> Effect<Unit>,
+    val readString: Effect<String>
+)
 ```
 
 ## DSL for effects handling
