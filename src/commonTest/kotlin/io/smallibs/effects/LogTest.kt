@@ -15,14 +15,13 @@ class LogTest {
         handle<Unit, Log> { logger ->
             logger.log("Hello ").bind()
             logger.log("World!").bind()
-        } with {
-            Log { value ->
-                { k ->
-                    log.getAndSet(log.value + value)
-                    k(Unit)
-                }
+        } with Log { value ->
+            { k ->
+                log.getAndSet(log.value + value)
+                k(Unit)
             }
         }
+
 
         Await() atMost 5000 until { log.value == "Hello World!" }
     }

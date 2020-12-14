@@ -16,19 +16,18 @@ class StateTest {
             state.set("World!").bind()
             val name: String = state.get.bind()
             state.set("Hello $name").bind()
-        } with {
-            State(
-                { value ->
-                    { k ->
-                        store.getAndSet(value)
-                        k(Unit)
-                    }
-                },
+        } with State(
+            { value ->
                 { k ->
-                    k(store.value)
+                    store.getAndSet(value)
+                    k(Unit)
                 }
-            )
-        }
+            },
+            { k ->
+                k(store.value)
+            }
+        )
+
 
         Await() atMost 5000 until { store.value == "Hello World!" }
     }

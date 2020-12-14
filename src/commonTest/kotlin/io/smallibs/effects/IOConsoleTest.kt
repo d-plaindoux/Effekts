@@ -14,20 +14,19 @@ class IOConsoleTest {
         handle<Unit, IOConsole> { console ->
             val name = console.readString.bind()
             console.printString("Hello $name").bind()
-        } with {
-            IOConsole(
-                { text ->
-                    { k ->
-                        actions += "printString($text)"
-                        k(Unit)
-                    }
-                },
+        } with IOConsole(
+            { text ->
                 { k ->
-                    actions += "readStream(World)"
-                    k("World!")
+                    actions += "printString($text)"
+                    k(Unit)
                 }
-            )
-        }
+            },
+            { k ->
+                actions += "readStream(World)"
+                k("World!")
+            }
+        )
+
 
         Await() atMost 5000 until { actions.size == 2 }
 
