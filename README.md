@@ -17,7 +17,7 @@ class IOConsole(
 
 ```kotlin
 handle<Unit, IOConsole> { console ->
-    val name = console.readString().bind()
+    val name = console.readString.bind()
     console.printString("Hello $name").bind()
 } with {
     IOConsole(
