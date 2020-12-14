@@ -6,12 +6,12 @@ import kotlinx.coroutines.async
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class Effects<O, E>(private val block: suspend Effects<O, E>.(E) -> O) {
+class Effects<O, H: Handler>(private val block: suspend Effects<O, H>.(H) -> O) {
 
-    infix fun with(effect: () -> E): Deferred<O> =
+    infix fun with(effect: () -> H): Deferred<O> =
         with(effect())
 
-    infix fun with(effect: E): Deferred<O> =
+    infix fun with(effect: H): Deferred<O> =
         GlobalScope.async { run { block(effect) } } // Execution should be reviewed
 
     suspend fun <A> Effect<A>.bind(): A = this{ v ->
@@ -19,7 +19,7 @@ class Effects<O, E>(private val block: suspend Effects<O, E>.(E) -> O) {
     }
 
     companion object {
-        fun <O, E> handle(block: suspend Effects<O, E>.(E) -> O) =
+        fun <O, H: Handler> handle(block: suspend Effects<O, H>.(H) -> O) =
             Effects(block)
     }
 }
