@@ -6,45 +6,43 @@ import io.smallibs.core.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
-class LogAndIOConsoleTest {
+class StateAndLogTest {
 
     @Test
     fun shouldPerformEffect() {
         val log: AtomicRef<String> = atomic("")
-        val actions = mutableListOf<String>()
+        val state = atomic(10)
 
-        handle<Unit, And<State<String>, Log>> {
-            val name = it.left.get.bind()
-            it.left.set("Hello $name").bind()
-            it.right.log("Done").bind()
-        } with {
-            State<String>(
-                set = { text ->
+        GlobalScope.async {
+            handle<Unit, And<State<Int>, Log>> {
+                val value1 = it.left.get.bind()
+                it.left.set(value1 + 32).bind()
+                val value2 = it.left.get.bind()
+                it.right.log("Done with $value2").bind()
+            } with {
+                State<Int>(
+                    set = { value ->
+                        { k ->
+                            state.value = value
+                            k(Unit)
+                        }
+                    },
+                    get = { k ->
+                        k(state.value)
+                    }
+                ) and Log { value ->
                     { k ->
-                        actions += "printString($text)"
+                        log.getAndSet(log.value + value)
                         k(Unit)
                     }
-                },
-                get = { k ->
-                    actions += "readStream(World)"
-                    k("World!")
-                }
-            ) and Log { value ->
-                { k ->
-                    log.getAndSet(log.value + value)
-                    k(Unit)
                 }
             }
         }
 
-        Await() atMost 5000 until { log.value == "Done" }
-
-        assertEquals(
-            listOf("readStream(World)", "printString(Hello World!)"),
-            actions
-        )
+        Await() atMost 5000 until { log.value == "Done with 42" }
     }
 }
