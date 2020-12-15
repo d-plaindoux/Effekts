@@ -25,12 +25,12 @@ handle<Unit, IOConsole> { console ->
     printString = { text ->
         { k ->
             actions += "printString($text)"
-            k(Unit)
+            k.resume(Unit)
         }
     },
     readString = { k ->
         actions += "readStream(World)"
-        k("World!")
+        k.resume("World!")
     }
 )
 ```
@@ -73,16 +73,16 @@ handle<Unit, And<State<Int>, Log>> {
         set = { value ->
             { k ->
                 state.value = value
-                k(Unit)
+                k.resume(Unit)
             }
         },
         get = { k ->
-            k(state.value)
+            k.resume(state.value)
         }
     ) and Log { value ->
         { k ->
             log.getAndSet(log.value + value)
-            k(Unit)
+            k.resume(Unit)
         }
     }
 }
