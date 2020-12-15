@@ -6,6 +6,7 @@ import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlin.coroutines.resume
 import kotlin.test.Test
 
 class LogTest {
@@ -21,7 +22,7 @@ class LogTest {
             } with Log { value ->
                 { k ->
                     log.getAndSet(log.value + value)
-                    k(Unit)
+                    k.resume(Unit)
                 }
             }
         }

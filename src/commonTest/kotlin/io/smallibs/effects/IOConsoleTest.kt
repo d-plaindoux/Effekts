@@ -4,6 +4,7 @@ import io.smallibs.core.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlin.coroutines.resume
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,15 +19,15 @@ class IOConsoleTest {
                 val name = console.readString.bind()
                 console.printString("Hello $name").bind()
             } with IOConsole(
-                { text ->
+                printString = { text ->
                     { k ->
                         actions += "printString($text)"
-                        k(Unit)
+                        k.resume(Unit)
                     }
                 },
-                { k ->
+                readString = { k ->
                     actions += "readStream(World)"
-                    k("World!")
+                    k.resume("World!")
                 }
             )
         }

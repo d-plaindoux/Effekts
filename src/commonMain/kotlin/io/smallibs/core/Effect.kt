@@ -1,3 +1,5 @@
 package io.smallibs.core
 
-typealias Effect<T> = suspend (suspend (T) -> T) -> T
+import kotlin.coroutines.Continuation
+
+typealias Effect<T> = (Continuation<T>) -> Unit

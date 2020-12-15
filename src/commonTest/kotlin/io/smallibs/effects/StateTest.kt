@@ -6,6 +6,7 @@ import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlin.coroutines.resume
 import kotlin.test.Test
 
 class StateTest {
@@ -21,12 +22,12 @@ class StateTest {
                 state.set("Hello $name").bind()
             } with State(
                 get = { k ->
-                    k(store.value)
+                    k.resume(store.value)
                 },
                 set = { value ->
                     { k ->
                         store.getAndSet(value)
-                        k(Unit)
+                        k.resume(Unit)
                     }
                 }
             )
