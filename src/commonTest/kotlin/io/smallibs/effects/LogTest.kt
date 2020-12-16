@@ -1,6 +1,6 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Effects.Companion.handle
+import io.smallibs.effect.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
@@ -17,8 +17,8 @@ class LogTest {
 
         GlobalScope.async {
             handle<Unit, Log> { logger ->
-                logger.log("Hello ").bind()
-                logger.log("World!").bind()
+                logger.log("Hello ").perform()
+                logger.log("World!").perform()
             } with Log { value ->
                 { k ->
                     log.getAndSet(log.value + value)

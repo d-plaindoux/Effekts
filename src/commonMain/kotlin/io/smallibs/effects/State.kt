@@ -1,7 +1,7 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Effect
-import io.smallibs.core.Handler
+import io.smallibs.effect.Effect
+import io.smallibs.effect.Handler
 
 class State<V>(
     val set: (V) -> Effect<Unit>,

@@ -1,4 +1,4 @@
-package io.smallibs.core
+package io.smallibs.effect
 
 class And<L: Handler, R: Handler>(val left: L, val right: R): Handler {
     companion object {

@@ -1,6 +1,6 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Effects.Companion.handle
+import io.smallibs.effect.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
@@ -17,9 +17,9 @@ class StateTest {
 
         GlobalScope.async {
             handle<Unit, State<String>> { state ->
-                state.set("World!").bind()
-                val name: String = state.get.bind()
-                state.set("Hello $name").bind()
+                state.set("World!").perform()
+                val name: String = state.get.perform()
+                state.set("Hello $name").perform()
             } with State(
                 get = { k ->
                     k.resume(store.value)

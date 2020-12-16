@@ -1,6 +1,6 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Effects.Companion.handle
+import io.smallibs.effect.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -16,8 +16,8 @@ class IOConsoleTest {
 
         GlobalScope.async {
             handle<Unit, IOConsole> { console ->
-                val name = console.readString.bind()
-                console.printString("Hello $name").bind()
+                val name = console.readString.perform()
+                console.printString("Hello $name").perform()
             } with IOConsole(
                 printString = { text ->
                     { k ->

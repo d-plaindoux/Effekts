@@ -1,8 +1,8 @@
 package io.smallibs.effects
 
-import io.smallibs.core.And
-import io.smallibs.core.And.Companion.and
-import io.smallibs.core.Effects.Companion.handle
+import io.smallibs.effect.And
+import io.smallibs.effect.And.Companion.and
+import io.smallibs.effect.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
@@ -20,10 +20,10 @@ class StateAndLogTest {
 
         GlobalScope.async {
             handle<Unit, And<State<Int>, Log>> {
-                val value1 = it.left.get.bind()
-                it.left.set(value1 + 32).bind()
-                val value2 = it.left.get.bind()
-                it.right.log("Done with $value2").bind()
+                val value1 = it.left.get.perform()
+                it.left.set(value1 + 32).perform()
+                val value2 = it.left.get.perform()
+                it.right.log("Done with $value2").perform()
             } with {
                 State<Int>(
                     set = { value ->
