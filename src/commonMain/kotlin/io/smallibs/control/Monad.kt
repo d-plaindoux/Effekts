@@ -18,7 +18,10 @@ interface Monad<F> {
     fun <A> returns(a: A): App<F, A> = applicative.pure(a)
 
     companion object {
-        suspend fun <F, R> Monad<F>.fluent(block: suspend FluentMonad<F>.() -> R): R =
+        fun <F, R> Monad<F>.fluent(block: FluentMonad<F>.() -> R): R =
+            FluentMonad(this).block()
+
+        suspend fun <F, R> Monad<F>.fluentS(block: suspend FluentMonad<F>.() -> R): R =
             FluentMonad(this).block()
     }
 }

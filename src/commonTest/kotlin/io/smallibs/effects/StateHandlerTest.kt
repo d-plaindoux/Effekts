@@ -1,7 +1,7 @@
 package io.smallibs.effects
 
 import io.smallibs.control.App
-import io.smallibs.control.Monad.Companion.fluent
+import io.smallibs.control.Monad.Companion.fluentS
 import io.smallibs.data.StateK
 import io.smallibs.data.StateK.Companion.fix
 import io.smallibs.data.StateK.Companion.unfix
@@ -21,7 +21,7 @@ class StateHandlerTest {
     fun shouldPerformEffect() {
         val state = waitFor {
             handle<App<StateK<Int>, Unit>, StateHandler<Int>> { state ->
-                StateMonad<Int>().fluent {
+                StateMonad<Int>().fluentS {
                     state.get.perform() bind { s ->
                         waitFor { state.set(s + 1).perform() } // waitFor o_O
                     }
