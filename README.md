@@ -19,18 +19,21 @@ class IOConsole(
 val actions = mutableListOf<String>()
 
 handle<Unit, IOConsole> { console ->
-    val name = console.readString.bind()
-    console.printString("Hello $name").bind()
+    EffectMonad().fluent {
+        console.readString bind { name ->
+            console.printString("Hello $name")
+        }
+    }.perform()
 } with IOConsole(
-    printString = { text ->
+    printString = Effect { text ->
         { k ->
             actions += "printString($text)"
-            k.resume(Unit)
+            k(Unit)
         }
     },
-    readString = { k ->
+    readString = Effect { k ->
         actions += "readStream(World)"
-        k.resume("World!")
+        k("World!")
     }
 )
 ```
@@ -64,23 +67,31 @@ val log: AtomicRef<String> = atomic("")
 val state = atomic(10)
 
 handle<Unit, And<State<Int>, Log>> {
-    val value1 = it.left.get.bind()
-    it.left.set(value1 + 32).bind()
-    val value2 = it.left.get.bind()
-    it.right.log("Done with $value2").bind()
+    val state = effect.left
+    val logger = effect.right
+
+    EffectMonad().fluent {
+        state.get bind {
+            state.set(it + 32)
+        } bind {
+            state.get
+        } bind {
+            logger.log("Done with $it")
+        }
+    }.perform()
 } with {
     State<Int>(
         set = { value ->
-            { k ->
+            Effect { k ->
                 state.value = value
                 k.resume(Unit)
             }
         },
-        get = { k ->
+        get = Effect { k ->
             k.resume(state.value)
         }
     ) and Log { value ->
-        { k ->
+        Effect { k ->
             log.getAndSet(log.value + value)
             k.resume(Unit)
         }

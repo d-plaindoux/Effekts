@@ -1,10 +1,12 @@
 package io.smallibs.effects
 
-import io.smallibs.core.Effects.Companion.handle
+import io.smallibs.control.Monad.Companion.fluent
+import io.smallibs.data.Effect
+import io.smallibs.data.EffectMonad
+import io.smallibs.effect.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlin.coroutines.resume
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,18 +18,21 @@ class IOConsoleTest {
 
         GlobalScope.async {
             handle<Unit, IOConsole> { console ->
-                val name = console.readString.bind()
-                console.printString("Hello $name").bind()
+                EffectMonad().fluent {
+                    console.readString bind {
+                        console.printString("Hello $it")
+                    }
+                }.perform()
             } with IOConsole(
                 printString = { text ->
-                    { k ->
+                    Effect { k ->
                         actions += "printString($text)"
-                        k.resume(Unit)
+                        k(Unit)
                     }
                 },
-                readString = { k ->
+                readString = Effect { k ->
                     actions += "readStream(World)"
-                    k.resume("World!")
+                    k("World!")
                 }
             )
         }
