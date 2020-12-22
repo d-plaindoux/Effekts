@@ -26,7 +26,8 @@ class StateFunctor<S> : Functor<StateK<S>> {
     }
 }
 
-class StateApplicative<S>(override val functor: Functor<StateK<S>> = StateFunctor()) : Applicative<StateK<S>>,
+class StateApplicative<S>(override val functor: Functor<StateK<S>> = StateFunctor()) :
+    Applicative<StateK<S>>,
     Functor<StateK<S>> by functor {
     override fun <A> pure(a: A): App<StateK<S>, A> = State { s: S -> (a to s) }
     override fun <A, B> apply(mf: App<StateK<S>, (A) -> B>): (App<StateK<S>, A>) -> App<StateK<S>, B> =
@@ -37,11 +38,16 @@ class StateApplicative<S>(override val functor: Functor<StateK<S>> = StateFuncto
                 f(a) to spp
             }
         }
+
+    override fun <A, B> map(ma: App<StateK<S>, A>, f: (A) -> B): App<StateK<S>, B> {
+        return functor.map(ma, f)
+    }
 }
 
-class StateMonad<S>(override val applicative: Applicative<StateK<S>> = StateApplicative()) : Monad<StateK<S>>,
+class StateMonad<S>(override val applicative: Applicative<StateK<S>> = StateApplicative()) :
+    Monad<StateK<S>>,
     Applicative<StateK<S>> by applicative {
-    override fun <A> join(mma: App<StateK<S>, App<StateK<S>, A>>): App<StateK<S>, A> = State { s: S ->
+    override fun <A> join(mma: App<StateK<S>, App<StateK<S>, A>>): App<StateK<S>, A> = State { s ->
         val (ma, sp) = mma.fix()(s)
         val (a, spp) = ma.fix()(sp)
         a to spp
@@ -49,7 +55,7 @@ class StateMonad<S>(override val applicative: Applicative<StateK<S>> = StateAppl
 }
 
 fun <S> get() = State { s: S -> s to s }
-fun <S> set(ns: S) = State { s: S -> Unit to ns }
+fun <S> set(ns: S) = State { _: S -> Unit to ns }
 fun <S> modify(f: (S) -> S) = StateMonad<S>().fluent {
     get<S>() bind { s: S -> set(f(s)) }
 }

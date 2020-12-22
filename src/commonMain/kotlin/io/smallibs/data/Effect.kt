@@ -18,7 +18,6 @@ data class Effect<A>(private val behavior: ((A) -> Unit) -> Unit) : App<EffetK, 
 }
 
 class EffetK private constructor() {
-    @Suppress("UNCHECKED_CAST")
     companion object {
         fun <A> App<EffetK, A>.fix(): Effect<A> =
             this as Effect<A>

@@ -1,16 +1,5 @@
 package io.smallibs.effects
 
-import io.smallibs.control.App
-import io.smallibs.control.Monad.Companion.fluent
-import io.smallibs.data.*
-import io.smallibs.data.EffetK.Companion.fix
-import io.smallibs.effect.Effects.Companion.handle
-import io.smallibs.utils.Await
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlin.test.Test
-
 class StateHandlerTest {
 /*
     @Test
@@ -42,4 +31,3 @@ class StateHandlerTest {
     }
  */
 }
-

@@ -3,7 +3,6 @@ package io.smallibs.effects
 import io.smallibs.control.Monad.Companion.fluent
 import io.smallibs.data.Effect
 import io.smallibs.data.EffectMonad
-import io.smallibs.data.EffetK.Companion.fix
 import io.smallibs.effect.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
