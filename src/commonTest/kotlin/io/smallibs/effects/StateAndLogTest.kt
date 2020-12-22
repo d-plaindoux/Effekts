@@ -33,7 +33,7 @@ class StateAndLogTest {
                     } bind {
                         logger.log("Done with $it")
                     }
-                }.fix().perform()
+                }.perform()
             } with {
                 val state = atomic(10)
 

@@ -23,7 +23,7 @@ class IOConsoleTest {
                     console.readString bind {
                         console.printString("Hello $it")
                     }
-                }.fix().perform()
+                }.perform()
             } with IOConsole(
                 printString = { text ->
                     Effect { k ->

@@ -20,8 +20,5 @@ interface Monad<F> {
     companion object {
         fun <F, R> Monad<F>.fluent(block: FluentMonad<F>.() -> R): R =
             FluentMonad(this).block()
-
-        suspend fun <F, R> Monad<F>.fluentS(block: suspend FluentMonad<F>.() -> R): R =
-            FluentMonad(this).block()
     }
 }
