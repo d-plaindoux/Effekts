@@ -1,4 +1,4 @@
-package io.smallibs.stdlib
+package io.smallibs.extension
 
 infix fun <A, B, C> ((A) -> B).then(f: (B) -> C): (A) -> C = {
     f(this(it))

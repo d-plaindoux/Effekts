@@ -5,7 +5,7 @@ import io.smallibs.control.Applicative
 import io.smallibs.control.Functor
 import io.smallibs.control.Monad
 import io.smallibs.data.EffetK.Companion.invoke
-import io.smallibs.stdlib.then
+import io.smallibs.extension.then
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
