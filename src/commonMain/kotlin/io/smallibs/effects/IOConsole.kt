@@ -1,6 +1,6 @@
 package io.smallibs.effects
 
-import io.smallibs.effect.Effect
+import io.smallibs.data.Effect
 import io.smallibs.effect.Handler
 
 class IOConsole(

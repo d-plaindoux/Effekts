@@ -1,8 +1,8 @@
 package io.smallibs.effects
 
 import io.smallibs.control.App
+import io.smallibs.data.Effect
 import io.smallibs.data.StateK
-import io.smallibs.effect.Effect
 import io.smallibs.effect.Handler
 
 class StateHandler<V>(

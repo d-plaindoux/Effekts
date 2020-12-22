@@ -1,12 +1,12 @@
 package io.smallibs.effects
 
+import io.smallibs.data.Effect
 import io.smallibs.effect.Effects.Companion.handle
 import io.smallibs.utils.Await
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlin.coroutines.resume
 import kotlin.test.Test
 
 class LogTest {
@@ -20,9 +20,9 @@ class LogTest {
                 logger.log("Hello ").perform()
                 logger.log("World!").perform()
             } with Log { value ->
-                { k ->
+                Effect { k ->
                     log.getAndSet(log.value + value)
-                    k.resume(Unit)
+                    k(Unit)
                 }
             }
         }

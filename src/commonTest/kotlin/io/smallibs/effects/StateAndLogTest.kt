@@ -1,5 +1,9 @@
 package io.smallibs.effects
 
+import io.smallibs.control.Monad.Companion.fluent
+import io.smallibs.data.Effect
+import io.smallibs.data.EffectMonad
+import io.smallibs.data.EffetK.Companion.fix
 import io.smallibs.effect.And
 import io.smallibs.effect.And.Companion.and
 import io.smallibs.effect.Effects.Companion.handle
@@ -8,7 +12,6 @@ import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlin.coroutines.resume
 import kotlin.test.Test
 
 class StateAndLogTest {
@@ -16,29 +19,38 @@ class StateAndLogTest {
     @Test
     fun shouldPerformEffect() {
         val log: AtomicRef<String> = atomic("")
-        val state = atomic(10)
 
         GlobalScope.async {
-            handle<Unit, And<State<Int>, Log>> {
-                val value1 = it.left.get.perform()
-                it.left.set(value1 + 32).perform()
-                val value2 = it.left.get.perform()
-                it.right.log("Done with $value2").perform()
+            handle<Unit, And<StateEff<Int>, Log>> { effect ->
+                val state = effect.left
+                val logger = effect.right
+
+                EffectMonad().fluent {
+                    state.get bind {
+                        state.set(it + 32)
+                    } bind {
+                        state.get
+                    } bind {
+                        logger.log("Done with $it")
+                    }
+                }.fix().perform()
             } with {
-                State<Int>(
+                val state = atomic(10)
+
+                StateEff<Int>(
                     set = { value ->
-                        { k ->
+                        Effect { k ->
                             state.value = value
-                            k.resume(Unit)
+                            k(Unit)
                         }
                     },
-                    get = { k ->
-                        k.resume(state.value)
+                    get = Effect { k ->
+                        k(state.value)
                     }
                 ) and Log { value ->
-                    { k ->
+                    Effect { k ->
                         log.getAndSet(log.value + value)
-                        k.resume(Unit)
+                        k(Unit)
                     }
                 }
             }

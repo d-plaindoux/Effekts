@@ -11,7 +11,7 @@ class FluentMonad<F>(private val monad: Monad<F>) : FluentApplicative<F>(monad.a
 interface Monad<F> {
     val applicative: Applicative<F>
 
-    fun <A> join(ma: App<F, App<F, A>>): App<F, A>
+    fun <A> join(mma: App<F, App<F, A>>): App<F, A>
 
     fun <A, B> bind(ma: App<F, A>, f: (A) -> App<F, B>): App<F, B> = join(applicative.map(ma, f))
 

@@ -1,43 +1,44 @@
 package io.smallibs.effects
 
 import io.smallibs.control.App
-import io.smallibs.control.Monad.Companion.fluentS
-import io.smallibs.data.StateK
+import io.smallibs.control.Monad.Companion.fluent
+import io.smallibs.data.*
+import io.smallibs.data.EffetK.Companion.fix
 import io.smallibs.data.StateK.Companion.fix
-import io.smallibs.data.StateK.Companion.unfix
-import io.smallibs.data.StateMonad
 import io.smallibs.effect.Effects.Companion.handle
-import io.smallibs.utils.Await
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.coroutines.resume
 import kotlin.test.Test
 
 class StateHandlerTest {
 
-    private fun <T> waitFor(f: suspend () -> T): T = TODO() // Un truc à la Arrow.Fx !
-
+/*
     @ExperimentalCoroutinesApi
     @Test
     fun shouldPerformEffect() {
-        val state = waitFor {
+        val state =
             handle<App<StateK<Int>, Unit>, StateHandler<Int>> { state ->
-                StateMonad<Int>().fluentS {
-                    state.get.perform() bind { s ->
-                        waitFor { state.set(s + 1).perform() } // waitFor o_O
+                StateMonad<Int>().fluent {
+                    EffectMonad().fluent {
+                        val app: App<EffetK, App<StateK<Int>, Effect<App<StateK<Int>, Unit>>>> = state.get map { s: App<StateK<Int>, Int> -> s map { state.set(it + 1) } }
+                        app
                     }
-                }
+                }.fix().perform().fix()(41).first.perform()
             } with StateHandler(
                 set = { value ->
-                    { k ->
-                        k.resume({ s: Int -> Unit to value }.unfix())
+                    Effect { k ->
+                        k(State { s: Int -> Unit to value })
                     }
                 },
-                get = { k ->
-                    k.resume({ s: Int -> s to s }.unfix())
+                get = Effect { k ->
+                    k(State { s: Int -> s to s })
                 }
             )
-        }
-
-        Await() atMost 5000 until { state.fix()(41).second == 42 }
     }
+
+    Await() atMost 5000 until { state.fix()(41).second == 42 }
 }
+
+ */
+}
+
+

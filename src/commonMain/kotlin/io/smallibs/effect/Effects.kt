@@ -1,5 +1,7 @@
 package io.smallibs.effect
 
+import io.smallibs.data.Effect
+import io.smallibs.data.Internal
 import kotlin.coroutines.suspendCoroutine
 
 class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) -> O) {
@@ -11,10 +13,7 @@ class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) -> O)
         block(effect)
 
     suspend fun <A> Effect<A>.perform(): A =
-        suspendCoroutine { cont -> this(cont) }
-
-    suspend fun <A> perform(e: Effect<A>): A =
-        suspendCoroutine { cont -> e(cont) }
+        suspendCoroutine { cont -> this.behavior(Internal(cont)) }
 
     companion object {
         fun <O, H : Handler> handle(block: suspend Effects<O, H>.(H) -> O) =
