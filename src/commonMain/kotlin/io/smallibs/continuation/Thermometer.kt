@@ -10,9 +10,10 @@ package io.smallibs.continuation
 class Thermometer<A> private constructor(private var context: Context<A>) : Control<A> {
 
     override fun reset(block: () -> A): A {
-        return runWithFuture(block, listOf())
+        return run(block, listOf())
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <B : Any> shift(f: ((B) -> A) -> A): A {
         val (frame, future) = context.state.future.pop(Frame.Enter)
         context = context.setFuture(future)
@@ -23,10 +24,10 @@ class Thermometer<A> private constructor(private var context: Context<A>) : Cont
                 return frame.value as A
             }
             is Frame.Enter -> {
-                val future = context.state.past.reversed()
+                val newFuture = context.state.past.reversed()
                 val block = context.state.block
                 val k = { v: B ->
-                    runWithFuture(block!!, future + Frame.Return(v))
+                    run(block!!, newFuture + Frame.Return(v))
                 }
                 context = context.addToPast(Frame.Enter)
                 throw Done(f(k))
@@ -34,22 +35,19 @@ class Thermometer<A> private constructor(private var context: Context<A>) : Cont
         }
     }
 
-    private fun runWithFuture(f: (() -> A), future: List<Frame>): A =
+    @Suppress("UNCHECKED_CAST")
+    private fun run(f: (() -> A), future: List<Frame>): A =
         try {
-            context = Context(State(f, listOf(), future), context.nest + listOf(context.state))
+            context = context.switch(f, future)
             f()
         } catch (d: Done) {
             d.value as A // Because of exception limitation
         } finally {
-            val (prev, nest) = context.nest.pop()
-            context = Context(prev, nest)
+            context = context.returns()
         }
 
     companion object {
-        private operator fun <A> invoke() =
-            Thermometer<A>(Context(State(null, listOf(), listOf()), listOf()))
-
         fun <A> run(block: Thermometer<A>.() -> A) =
-            Thermometer<A>().run(block)
+            Thermometer<A>(Context()).run(block)
     }
 }
