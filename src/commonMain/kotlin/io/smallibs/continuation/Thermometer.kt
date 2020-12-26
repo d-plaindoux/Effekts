@@ -27,7 +27,7 @@ class Thermometer<A> private constructor(private var context: Context<A>) : Cont
                 val newFuture = context.state.past.reversed()
                 val block = context.state.block
                 val k = { v: B ->
-                    run(block!!, newFuture + Frame.Return(v))
+                    run(block!!, listOf(Frame.Return(v)) + newFuture)
                 }
                 context = context.addToPast(Frame.Enter)
                 throw Done(f(k))
