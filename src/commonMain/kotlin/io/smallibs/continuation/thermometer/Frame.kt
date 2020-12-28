@@ -1,6 +1,6 @@
-package io.smallibs.continuation
+package io.smallibs.continuation.thermometer
 
-internal sealed class Frame {
+sealed class Frame {
     data class Return(val value: Any) : Frame()
     object Enter : Frame()
 }

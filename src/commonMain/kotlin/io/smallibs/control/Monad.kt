@@ -5,6 +5,7 @@ class FluentMonad<F>(private val monad: Monad<F>) : FluentApplicative<F>(monad.a
 
     infix fun <A, B> App<F, A>.bind(f: (A) -> App<F, B>): App<F, B> = monad.bind(this, f)
 
+
     fun <A> returns(a: A): App<F, A> = monad.returns(a)
 }
 

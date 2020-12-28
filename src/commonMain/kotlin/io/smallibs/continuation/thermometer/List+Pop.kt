@@ -1,4 +1,4 @@
-package io.smallibs.continuation
+package io.smallibs.continuation.thermometer
 
 internal fun <A> List<A>.pop(): Pair<A, List<A>> =
     this[0] to this.subList(1, this.size)

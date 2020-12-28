@@ -1,6 +1,6 @@
-package io.smallibs.continuation
+package io.smallibs.continuation.thermometer
 
-internal class Context<A> private constructor(
+class Context<A> private constructor(
     val state: State<A>,
     val nest: List<State<A>>
 ) {

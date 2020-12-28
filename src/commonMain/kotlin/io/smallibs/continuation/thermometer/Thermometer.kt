@@ -1,33 +1,26 @@
-package io.smallibs.continuation
+package io.smallibs.continuation.thermometer
 
-//
-// See https://github.com/jkoppel/thermometer-continuations
-// for the original implementation in Java, OCaml and SML.
-//
-// Paper: https://dl.acm.org/doi/pdf/10.1145/3236771
-//
-
-class Thermometer<A> private constructor(private var context: Context<A>) : Control<A> {
+class Thermometer<A>(var context: Context<A>) : Control<A> {
 
     override fun reset(block: () -> A): A {
         return run(block, listOf())
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <B : Any> shift(f: ((B) -> A) -> A): A {
+    override fun <B> shift(f: ((B) -> A) -> A): B {
         val (frame, future) = context.state.future.pop(Frame.Enter)
         context = context.setFuture(future)
 
         when (frame) {
             is Frame.Return -> {
                 context = context.addToPast(frame)
-                return frame.value as A
+                return frame.value as B // So each returned value is a A (by cast)
             }
             is Frame.Enter -> {
                 val newFuture = context.state.past.reversed()
                 val block = context.state.block
                 val k = { v: B ->
-                    run(block!!, listOf(Frame.Return(v)) + newFuture)
+                    run(block!!, listOf(Frame.Return(v as Any)) + newFuture)
                 }
                 context = context.addToPast(Frame.Enter)
                 throw Done(f(k))
