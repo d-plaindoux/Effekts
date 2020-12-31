@@ -20,5 +20,3 @@ class ContK {
         fun <A> App<ContK, A>.fix(): Cont<A> = this as Cont<A>
     }
 }
-
-
