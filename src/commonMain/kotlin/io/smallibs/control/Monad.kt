@@ -11,7 +11,7 @@ interface Monad<F> {
 
     fun <A> returns(a: A): App<F, A> = applicative.pure(a)
 
-    class FluentMonad<F>(private val monad: Monad<F>) : FluentApplicative<F>(monad.applicative) {
+    open class FluentMonad<F>(private val monad: Monad<F>) : FluentApplicative<F>(monad.applicative) {
         fun <A> App<F, App<F, A>>.join(): App<F, A> = monad.join(this)
 
         infix fun <A, B> App<F, A>.bind(f: (A) -> App<F, B>): App<F, B> = monad.bind(this, f)

@@ -33,6 +33,7 @@ class StateApplicative<S>(override val functor: Functor<StateK<S>> = StateFuncto
     Applicative<StateK<S>>,
     Functor<StateK<S>> by functor {
     override fun <A> pure(a: A): App<StateK<S>, A> = State { s: S -> (a to s) }
+
     override fun <A, B> apply(mf: App<StateK<S>, (A) -> B>): (App<StateK<S>, A>) -> App<StateK<S>, B> =
         { ma ->
             State { s: S ->

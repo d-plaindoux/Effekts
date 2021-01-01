@@ -32,16 +32,24 @@ class EffectFunctor : Functor<EffetK> {
         Effect { b -> ma(f then b) }
 }
 
-class EffectApplicative(override val functor: Functor<EffetK> = EffectFunctor()) : Applicative<EffetK> {
+class EffectApplicative(override val functor: Functor<EffetK> = EffectFunctor()) :
+    Applicative<EffetK>,
+    Functor<EffetK> by functor {
     override fun <A> pure(a: A): App<EffetK, A> =
         Effect { k -> k(a) }
 
     override fun <A, B> apply(mf: App<EffetK, (A) -> B>): (App<EffetK, A>) -> App<EffetK, B> = { ma ->
         Effect { b -> mf { f -> ma(f then b) } }
     }
+
+    override fun <A, B> map(ma: App<EffetK, A>, f: (A) -> B): App<EffetK, B> {
+        return functor.map(ma, f)
+    }
 }
 
-class EffectMonad(override val applicative: Applicative<EffetK> = EffectApplicative()) : Monad<EffetK> {
+class EffectMonad(override val applicative: Applicative<EffetK> = EffectApplicative()) :
+    Monad<EffetK>,
+    Applicative<EffetK> by applicative {
     override fun <A> join(mma: App<EffetK, App<EffetK, A>>): App<EffetK, A> =
         Effect { a -> mma { ma -> ma(a) } }
 }
