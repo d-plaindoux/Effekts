@@ -2,18 +2,18 @@ package io.smallibs.continuation.thermometer
 
 class Context<A> private constructor(
     val state: State<A>,
-    val nest: List<State<A>>
+    val nest: Stack<State<A>>
 ) {
-    constructor() : this(State(null, listOf(), listOf()), listOf())
+    constructor() : this(State(null, Stack(), Stack()), Stack())
 
-    fun setFuture(future: List<Frame>) =
+    fun setFuture(future: Stack<Frame>) =
         Context(State(this.state.block, this.state.past, future), this.nest)
 
     fun addToPast(frame: Frame) =
-        Context(State(this.state.block, this.state.past + listOf(frame), this.state.future), this.nest)
+        Context(State(this.state.block, this.state.past + Stack(frame), this.state.future), this.nest)
 
-    fun switch(f: () -> A, future: List<Frame>) =
-        Context(State(f, listOf(), future), this.nest + listOf(this.state))
+    fun switch(f: () -> A, future: Stack<Frame>) =
+        Context(State(f, Stack(), future), this.nest + Stack(this.state))
 
     fun returns(): Context<A> {
         val (prev, nest) = this.nest.pop()

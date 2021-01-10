@@ -3,7 +3,7 @@ package io.smallibs.continuation.thermometer
 class Thermometer<A>(var context: Context<A>) : Control<A> {
 
     override fun reset(block: () -> A): A {
-        return run(block, listOf())
+        return run(block, Stack())
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -20,7 +20,7 @@ class Thermometer<A>(var context: Context<A>) : Control<A> {
                 val newFuture = context.state.past.reversed()
                 val block = context.state.block
                 val k = { v: B ->
-                    run(block!!, listOf(Frame.Return(v as Any)) + newFuture)
+                    run(block!!, newFuture.push(Frame.Return(v as Any)))
                 }
                 context = context.addToPast(Frame.Enter)
                 throw Done(f(k))
@@ -29,7 +29,7 @@ class Thermometer<A>(var context: Context<A>) : Control<A> {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun run(f: (() -> A), future: List<Frame>): A =
+    private fun run(f: (() -> A), future: Stack<Frame>): A =
         try {
             context = context.switch(f, future)
             f()

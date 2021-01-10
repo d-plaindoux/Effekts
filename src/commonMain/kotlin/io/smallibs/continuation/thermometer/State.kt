@@ -2,6 +2,6 @@ package io.smallibs.continuation.thermometer
 
 class State<A>(
     val block: (() -> A)?,
-    val past: List<Frame>,
-    val future: List<Frame>
+    val past: Stack<Frame>,
+    val future: Stack<Frame>
 )

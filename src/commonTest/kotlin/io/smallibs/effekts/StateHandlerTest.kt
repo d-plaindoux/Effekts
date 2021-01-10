@@ -37,7 +37,6 @@ class StateHandlerTest {
                 }
             )
 
-
         val unsafeRun: Int = handledEffects.unsafeRun()
 
         assertEquals(unsafeRun, 42)
