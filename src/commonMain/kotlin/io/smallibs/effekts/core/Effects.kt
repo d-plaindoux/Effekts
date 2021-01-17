@@ -16,7 +16,7 @@ class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) -> O)
         HandledEffects { block(effect) }
 
     suspend fun <A> Effect<A>.perform(): A =
-        suspendCoroutine { this(Internal(it)) }
+        suspendCoroutine { this(Internal(it).reify()) }
 
     suspend fun <A> App<EffetK, A>.perform(): A =
         this.fix().perform()

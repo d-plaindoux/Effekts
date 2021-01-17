@@ -6,14 +6,15 @@ import io.smallibs.control.Functor
 import io.smallibs.control.Monad
 import io.smallibs.data.EffetK.Companion.invoke
 import io.smallibs.extension.then
+import io.smallibs.utils.Abstraction
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
-data class Internal<A>(val cont: Continuation<A>) : (A) -> Unit {
-    override fun invoke(a: A) = cont.resume(a)
+data class Internal<A>(val cont: Continuation<A>) : Abstraction<A, Unit> {
+    override operator fun invoke(a: A) = cont.resume(a)
 }
 
-data class Effect<A>(private val behavior: ((A) -> Unit) -> Unit) : App<EffetK, A>, ((A) -> Unit) -> Unit {
+data class Effect<A>(private val behavior: ((A) -> Unit) -> Unit) : App<EffetK, A>, Abstraction<(A) -> Unit, Unit> {
     override operator fun invoke(a: (A) -> Unit) = behavior(a)
 }
 

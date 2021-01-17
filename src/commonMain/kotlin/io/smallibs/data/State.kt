@@ -6,9 +6,10 @@ import io.smallibs.control.Functor
 import io.smallibs.control.Monad
 import io.smallibs.control.Monad.Companion.fluent
 import io.smallibs.data.StateK.Companion.invoke
+import io.smallibs.utils.Abstraction
 
-class State<A, S>(private val state: (S) -> Pair<A, S>) : (S) -> Pair<A, S>, App<StateK<S>, A> {
-    override operator fun invoke(s: S): Pair<A, S> = state(s)
+class State<A, S>(private val state: (S) -> Pair<A, S>) : App<StateK<S>, A>, Abstraction<S, Pair<A, S>> {
+    override operator fun invoke(a: S): Pair<A, S> = state(a)
 }
 
 class StateK<S> private constructor() {
