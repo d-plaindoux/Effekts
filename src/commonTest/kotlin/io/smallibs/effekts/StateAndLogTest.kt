@@ -21,9 +21,9 @@ class StateAndLogTest {
     fun shouldPerformEffect() {
         val log: AtomicRef<String> = atomic("")
 
-        val handled = handle<Unit, And<StateEff<Int>, Log>> { effect ->
-            val state = effect.left
-            val logger = effect.right
+        val handled = handle<Unit, And<StateEff<Int>, Log>> { effects ->
+            val state = effects.left
+            val logger = effects.right
 
             EffectMonad().fluent {
                 state.get bind {
