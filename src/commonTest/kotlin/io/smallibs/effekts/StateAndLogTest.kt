@@ -55,7 +55,7 @@ class StateAndLogTest {
             }
         }
 
-        handled.unsafeRun()
+        handled.unsafeSyncRun()
 
         assertEquals(log.value, "Done with 42")
     }

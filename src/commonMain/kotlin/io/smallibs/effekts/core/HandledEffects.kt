@@ -9,7 +9,7 @@ import kotlinx.coroutines.async
 class HandledEffects<O>(val result: suspend () -> O) {
 
     @ExperimentalCoroutinesApi
-    fun unsafeRun(durationInSeconds: Long = STANDARD_DURATION): O {
+    fun unsafeSyncRun(durationInSeconds: Long = STANDARD_DURATION): O {
         val deferred: Deferred<O> = GlobalScope.async { result() }
 
         Await() atMost (durationInSeconds * 1000) until {

@@ -38,7 +38,7 @@ class StateTest {
             }
         )
 
-        handled.unsafeRun()
+        handled.unsafeSyncRun()
 
         assertEquals(store.value, "Hello World!")
     }

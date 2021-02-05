@@ -22,7 +22,7 @@ class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) -> O)
         this.fix().perform()
 
     companion object {
-        fun <O, H : Handler> handle(block: suspend Effects<O, H>.(H) -> O) =
+        fun <O, H : Handler> handle(block: suspend Effects<O, H>.(H) -> O): Effects<O, H> =
             Effects(block)
     }
 }

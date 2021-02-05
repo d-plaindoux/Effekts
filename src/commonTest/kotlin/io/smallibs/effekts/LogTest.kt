@@ -31,7 +31,7 @@ class LogTest {
             }
         }
 
-        handled.unsafeRun()
+        handled.unsafeSyncRun()
 
         assertEquals(log.value, "Hello World!")
     }

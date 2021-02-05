@@ -35,7 +35,7 @@ class IOConsoleTest {
             }
         )
 
-        handled.unsafeRun()
+        handled.unsafeSyncRun()
 
         assertEquals(
             listOf("readStream(World)", "printString(Hello World!)"),
