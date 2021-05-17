@@ -1,5 +1,7 @@
 # Effekts
 
+**NOTE**: This project is no more maintained and has been merged in [Pilin](https://github.com/d-plaindoux/pilin)
+
 User defined effects for Kotlin multiplatform.
 
 # IOConsole example
